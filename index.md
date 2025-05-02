@@ -9,7 +9,9 @@ Ingeniero Civil Químico, Santiago, Chile.
 <a href="lplazaalvarez@gmail.com">lplazaalvarez@gmail.com</a>
 | <a href="https://www.linkedin.com/in/lplazaalvarez/">Linkedin</a>
 </div>
-
+> *"Tarea para la casa, aprender a vivir la contradicción sin conflicto"*
+> Nicanor Parra
+---
 
 ## Currently
 
@@ -34,7 +36,7 @@ Simulador Control PID de un tanque. [Link](https://luchoplaza.github.io/PIDSim/ 
 
 ## Education
 
-`2010-2013`
+`2010 - 2013`
 __Humanista-Científico Plan Biólogo,Escuela Técnica Profesional, Copiapó.__
 
 `2014 - 2020`
