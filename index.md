@@ -8,7 +8,7 @@ Ingeniero Civil Químico, Santiago, Chile.
 <div id="webaddress">
 <a href="lplazaalvarez@gmail.com">lplazaalvarez@gmail.com</a>
 | <a href="https://www.linkedin.com/in/lplazaalvarez/">Linkedin</a>
-</div>
+</div><br>
 
 ---
 >
