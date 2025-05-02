@@ -17,7 +17,7 @@ Ingeniero Civil Químico, Santiago, Chile.
 
 
 
-## Currently
+## Actualmente
 
 Ingeniero Mejora Continua APC (Advanced Process Control) para Concentradora Minería Escondida BHP
 ### Specialized in
@@ -26,7 +26,7 @@ Tratamiento de aguas, Desalinización de agua de mar, Tratamiento aerobico/anaer
 
 
 
-### Research interests
+### Intereses
 
 Data Science, Metalurgical Mining, Desalinization, LLMs and AI agents
 
@@ -38,7 +38,7 @@ Calidad físicoquimica de agua potable en Chile, [Soportado en Streamlit-Link](h
 `2025`
 Simulador Control PID de un tanque. [Link](https://luchoplaza.github.io/PIDSim/ 'Simulador PID')
 
-## Education
+## Educación
 
 `2010 - 2013`
 __Humanista-Científico Plan Biólogo,Escuela Técnica Profesional, Copiapó.__
