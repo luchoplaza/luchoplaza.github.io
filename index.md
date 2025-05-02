@@ -9,8 +9,12 @@ Ingeniero Civil Químico, Santiago, Chile.
 <a href="lplazaalvarez@gmail.com">lplazaalvarez@gmail.com</a>
 | <a href="https://www.linkedin.com/in/lplazaalvarez/">Linkedin</a>
 </div>
+
+---
+>
 > *"Tarea para la casa, aprender a vivir la contradicción sin conflicto"*
-> Nicanor Parra
+> - Nicanor Parra
+
 ---
 
 ## Currently
