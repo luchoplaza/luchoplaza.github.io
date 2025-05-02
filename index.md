@@ -15,13 +15,8 @@ Ingeniero Civil Químico, Santiago, Chile.
 
 Ingeniero Mejora Continua APC (Advanced Process Control) para Concentradora Minería Escondida BHP
 ### Specialized in
-Control avanzado de proceso (APC)
-- Model Predictive Control (MPC)
-Tratamiento de aguas
-- Desalinización de agua de mar
-- Tratamiento aerobico/anaerobico
-- Eliminación de nitrógeno
-- Sistemas con Microalgas
+Control avanzado de proceso (APC), Model Predictive Control (MPC)
+Tratamiento de aguas, Desalinización de agua de mar, Tratamiento aerobico/anaerobico, Eliminación de nitrógeno, Sistemas con Microalgas
 
 
 
