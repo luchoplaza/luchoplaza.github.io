@@ -57,10 +57,10 @@ Martinez et al., Quantifying the potential of microalgae to remove nutrients fro
 ### Proyectos
 
 `2022`
-Calidad físicoquimica de agua potable en Chile, [link](https://chilewaterquality.streamlit.app/)
+Calidad físicoquimica de agua potable en Chile, [Un link](https://chilewaterquality.streamlit.app/)
 
 `2025`
-Simulador Control PID de un tanque. [link](https://luchoplaza.github.io/PIDSim/)
+Simulador Control PID de un tanque. [link](https://luchoplaza.github.io/PIDSim/ 'Simulador PID')
 
 
 ## Occupation
