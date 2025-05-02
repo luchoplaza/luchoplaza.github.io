@@ -10,12 +10,12 @@ Ingeniero Civil Químico, Santiago, Chile.
 | <a href="https://www.linkedin.com/in/lplazaalvarez/">Linkedin</a>
 </div><br>
 
----
+
 >
 > *"Tarea para la casa, aprender a vivir la contradicción sin conflicto"*
 > - Nicanor Parra
 
----
+
 
 ## Currently
 
@@ -48,6 +48,9 @@ __Ingeniería Civil Química, Universidad Técnica Federico Santa María, Valpar
 
 `2019 - 2022`
 __Magister en ciencias de la ingeniería química, Universidad Técnica Federico Santa María, Valparaíso__
+
+`2024 - 2024`
+__Tecnologías de Producción, Aplicación y Sostenibilidad de Hidrógeno Verde, Universidad Técnica Federico Santa María, Valparaíso__
 
 
 
