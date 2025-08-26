@@ -1,6 +1,414 @@
 ---
 title: Extra Page
 ---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulación de Monte Carlo — D3.js</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#111927; --ink:#e5eefc; --muted:#9fb3c8; --accent:#7dd3fc; --accent-2:#a78bfa; --ok:#22c55e; --warn:#f97316; --bad:#ef4444;
+      --grid:#1b2636;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,Segoe UI,Roboto,Inter,Arial}
+    header{position:sticky;top:0;background:linear-gradient(180deg,rgba(11,15,20,.95),rgba(11,15,20,.85));backdrop-filter:saturate(1.2) blur(6px);z-index:10;border-bottom:1px solid #192233}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 18px}
+    h1{font-size:clamp(22px,3.2vw,34px);margin:0 0 8px 0}
+    h2{font-size:clamp(18px,2.4vw,26px);margin:16px 0 10px}
+    p{margin:10px 0;color:#d7e3f7}
+    a{color:var(--accent)}
 
-<h1>Extra Page</h1>
-<p>This is an extra HTML page in my portfolio.</p>
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .tab{padding:8px 12px;border:1px solid #234;cursor:pointer;border-radius:999px;color:var(--muted)}
+    .tab.active{color:var(--ink);background:linear-gradient(180deg,#1a2333,#111927);border-color:#2b3a54}
+
+    main{padding:14px 0 50px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .card{grid-column:1/-1;background:linear-gradient(180deg,#121b2b,#0f1521);border:1px solid #213047;border-radius:16px;box-shadow:0 4px 30px rgba(0,0,0,.25)}
+    .card>.body{padding:16px}
+
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 2px}
+    .control{display:flex;align-items:center;gap:8px;background:#0c1320;border:1px solid #1f2c40;padding:8px 10px;border-radius:12px}
+    .control label{font-size:13px;color:var(--muted)}
+    input[type=number], input[type=text], select{background:#0a1220;color:var(--ink);border:1px solid #213047;padding:6px 8px;border-radius:10px;min-width:70px}
+    input[type=range]{width:140px}
+    button{background:#0d1a2b;border:1px solid #24354d;color:var(--ink);padding:8px 12px;border-radius:12px;cursor:pointer}
+    button:hover{border-color:#345;}
+    .btn-accent{background:linear-gradient(180deg,#1e293b,#0f172a);border-color:#40608f}
+
+    .kpi{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+    .kpi .item{background:#0b1424;border:1px solid #1e2b40;padding:10px 12px;border-radius:12px}
+    .kpi b{font-weight:700}
+
+    .vis{width:100%;height:auto}
+    .row{display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width:960px){.row{grid-template-columns: 1.1fr .9fr}}
+
+    .caption{font-size:13px;color:var(--muted)}
+    .mini{font-size:12px;color:var(--muted)}
+    .hr{height:1px;background:#20304a;margin:14px 0}
+
+    .axis path,.axis line{stroke:#3a4d6b}
+    .axis text{fill:#bcd0ea;font-size:12px}
+    .bar{shape-rendering:crispEdges}
+    .gridline{stroke:var(--grid);stroke-width:1;shape-rendering:crispEdges}
+
+    .legend{display:flex;gap:10px;align-items:center}
+    .legend .swatch{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+    .note{background:#0f1a2c;border-left:3px solid var(--accent);padding:10px 12px;border-radius:10px;margin:10px 0;color:#d2e5ff}
+      mjx-container{color:var(--ink)}
+  </style>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\(","\)"],["$","$"]], displayMath: [["\[","\]"]], processEscapes: true },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Simulación de Monte Carlo con D3.js</h1>
+      <div class="mini">Explora conceptos clave con ejemplos interactivos: <b>π por dardos</b> y <b>convergencia</b>.</div>
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-target="#intro">📘 Conceptos</div>
+        <div class="tab" data-target="#pi-demo">🎯 π por dardos</div>
+        <div class="tab" data-target="#convergence">📈 Convergencia</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Intro / teoría -->
+    <section class="card" id="intro">
+      <div class="body">
+        <h2>¿Qué es Monte Carlo?</h2>
+        <p>
+          Es una <b>familia de métodos numéricos</b> que usa <b>aleatoriedad</b> para aproximar cantidades difíciles de calcular de forma determinista. La idea: 
+          <i>muestra al azar</i> muchas veces, calcula un resultado para cada muestra y promedia.
+        </p>
+        <div class="note">
+          Ejemplos típicos: estimar <b>π</b> lanzando puntos en un cuadrado, modelar <b>incertidumbre</b> en costos/tiempos, o calcular la <b>probabilidad</b> de superar un umbral.
+        </div>
+        <p>
+          Si cada simulación produce valores con varianza finita, el <b>error estándar</b> del promedio decrece como <code>1/√n</code>, donde <code>n</code> es el número de réplicas.
+        </p>
+      
+        <h3>Explicación estadística de lo observado en “π por dardos”</h3>
+        <p>Define, para cada lanzamiento, la variable indicadora $I_i = \mathbf{1}\{x_i^2 + y_i^2 \le 1\}$. Entonces $p = \Pr(I_i=1) = \pi/4$.</p>
+        <p>El estimador es la media muestral $\hat{p} = \frac{1}{n}\sum_{i=1}^n I_i$ y $\hat{\pi} = 4\,\hat{p}$.</p>
+        <ul>
+          <li><b>Insesgado:</b> $\mathbb{E}[\hat{p}] = p \Rightarrow \mathbb{E}[\hat{\pi}] = \pi$.</li>
+          <li><b>Varianza y EE:</b> Como $I_i \sim \mathrm{Bernoulli}(p)$ i.i.d., $\mathrm{Var}(\hat{p}) = p(1-p)/n$ y $\mathrm{Var}(\hat{\pi}) = 16\,p(1-p)/n$. En práctica estimamos $p$ con $\hat{p}$:
+            <div class="note">$\mathrm{EE}(\hat{\pi}) \approx 4\sqrt{\hat{p}(1-\hat{p})/n}$.</div>
+          </li>
+          <li><b>CLT e IC 95%:</b> Por el TCL, $\hat{\pi} \approx \mathcal{N}(\pi,\; 16\,p(1-p)/n)$ para $n$ grande. IC95%: $\hat{\pi} \pm 1.96\,\mathrm{EE}$.</li>
+          <li><b>Escala $1/\sqrt{n}$:</b> El error típico decrece como $1/\sqrt{n}$. Con $p=\pi/4\approx 0.785$ se tiene $4\sqrt{p(1-p)}\approx 1.64$; para error $\approx 0.01$, $n \approx (1.64/0.01)^2 \approx 26{,}900$ lanzamientos.</li>
+          <li><b>Supuestos:</b> muestras i.i.d. $U(0,1)^2$; correlaciones o sesgos inflan el error.</li>
+        </ul>
+        <p>En resumen, la estimación oscila alrededor de $\pi$ y la variabilidad se reduce a tasa $1/\sqrt{n}$, como ves en la gráfica.</p>
+        <div class="hr"></div>
+        <h3>Intuición práctica</h3>
+        <p>Imagina un tablero $1\times 1$ con un "cuarto de pizza" de radio $1$. Si tiras dardos completamente al azar, la probabilidad de caer dentro es el área del cuarto de círculo, $p = \pi/4$. Por eso usamos $\hat\pi = 4\cdot(\text{dentro}/n)$.</p>
+        <ul>
+          <li>Si duplicas $n$, el ruido baja aproximadamente un factor $1/\sqrt{2}$ (≈ 30% menos).</li>
+          <li>Las subidas y bajadas de la curva son <i>azar de muestreo</i>; con más $n$, se suaviza.</li>
+          <li>La <b>semilla</b> fija la secuencia aleatoria para repetir el experimento.</li>
+          <li>En la demo, la banda es $\hat\pi \pm 1.96\,\mathrm{EE}$ con $\mathrm{EE} \approx 4\sqrt{\hat p(1-\hat p)/n}$.</li>
+        </ul>
+        </div>
+
+    </section>
+
+    <!-- Demo π por dardos -->
+    <section class="card" id="pi-demo" style="display:none">
+      <div class="body">
+        <h2>Estimación de π con dardos</h2>
+        <div class="row">
+          <div>
+            <div class="controls">
+              <div class="control"><label>Semilla</label><input id="pi-seed" type="number" value="123"/></div>
+              <div class="control"><label>Puntos/seg</label><input id="pi-rate" type="range" min="50" max="3000" value="800"/><span id="pi-rate-val" class="mini">800</span></div>
+              <div class="control"><label>Máx. puntos visibles</label><input id="pi-maxdots" type="number" value="1200"/></div>
+              <button id="pi-start" class="btn-accent">▶️ Iniciar</button>
+              <button id="pi-step">➕ Paso ×100</button>
+              <button id="pi-reset">♻️ Reiniciar</button>
+              <button id="pi-export">⬇️ Exportar PNG</button>
+            </div>
+
+            <svg id="pi-board" class="vis" viewBox="0 0 520 520" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="caption">Cuadrado unidad (0–1) con cuarto de círculo de radio 1. Proporción dentro × 4 ≈ π.</div>
+
+            <div class="kpi" id="pi-kpis"></div>
+          </div>
+
+          <div>
+            <h3>Cómo funciona</h3>
+            <p>Generamos puntos $(x,y) \sim U(0,1)$. Contamos cuántos caen dentro del cuarto de círculo: $x^2 + y^2 \le 1$. La fracción dentro es $\approx \pi/4$, por eso $\pi \approx 4\cdot(\text{dentro}/\text{total})$.</p>
+            <div id="pi-conv"></div>
+            <div class="mini">La banda muestra un intervalo de confianza del 95% estimado con $\pm 1.96\,\mathrm{EE}$.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Convergencia general -->
+    <section class="card" id="convergence" style="display:none">
+      <div class="body">
+        <h2>Convergencia 1/√n (demostración rápida)</h2>
+        <p>Promediamos $n$ muestras de una variable con varianza finita (aquí, $U(0,1)$). El error típico del promedio disminuye como $1/\sqrt{n}$.</p>
+        <div class="controls">
+          <div class="control"><label>Semilla</label><input id="conv-seed" type="number" value="777"/></div>
+          <div class="control"><label>Máx n</label><input id="conv-n" type="number" value="5000"/></div>
+          <button id="conv-run" class="btn-accent">▶️ Generar</button>
+          <button id="conv-export">⬇️ Exportar PNG</button>
+        </div>
+        <svg id="conv-vis" class="vis" viewBox="0 0 780 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="caption">Media verdadera $= 0.5$. La banda gris sugiere el tamaño de error esperado $\sim 1/\sqrt{n}$.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // -------- Utilidades --------
+    function LCG(seed=123456789){
+      let a=1664525, c=1013904223, m=2**32, state=(seed>>>0);
+      const rand = ()=>{ state = (a*state + c) % m; return state/m; };
+      // Box-Muller usando el LCG para reproducibilidad
+      let spare=null;
+      const normal = (mu=0, sigma=1)=>{
+        if(spare!==null){const z=spare; spare=null; return mu+sigma*z}
+        let u=0,v=0,s=0; do{ u=rand()*2-1; v=rand()*2-1; s=u*u+v*v }while(s===0||s>=1);
+        const mul=Math.sqrt(-2*Math.log(s)/s); spare=v*mul; return mu+sigma*(u*mul);
+      }
+      const uniform = (a=0,b=1)=> a+(b-a)*rand();
+      const triangular = (a=0,c=0.5,b=1)=>{ const U=rand(); const Fc=(c-a)/(b-a); return U<Fc? a+Math.sqrt(U*(b-a)*(c-a)) : b-Math.sqrt((1-U)*(b-a)*(b-c)); };
+      return {rand, normal, uniform, triangular};
+    }
+
+    function fmt(x, d=4){
+      if(!isFinite(x)) return "—"; const abs=Math.abs(x);
+      if(abs>=1000) return d3.format(",.2f")(x); if(abs>=1) return d3.format(".4f")(x);
+      return d3.format(".2e")(x);
+    }
+
+    function exportSvgAsPng(svg, filename){
+      const s = new XMLSerializer().serializeToString(svg);
+      const blob = new Blob([s], {type: 'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const rect = svg.getBoundingClientRect();
+      canvas.width = rect.width*2; canvas.height = rect.height*2; // 2x for crispness
+      const ctx = canvas.getContext('2d');
+      img.onload = function(){
+        ctx.fillStyle = getComputedStyle(document.body).backgroundColor;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0,0, canvas.width, canvas.height);
+        const a = document.createElement('a');
+        a.download = filename; a.href = canvas.toDataURL('image/png'); a.click();
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+
+    function tabify(){
+      const tabs = document.querySelectorAll('.tab');
+      const sections = { '#intro': document.querySelector('#intro'), '#pi-demo': document.querySelector('#pi-demo'), '#convergence': document.querySelector('#convergence') };
+      tabs.forEach(t=> t.addEventListener('click', ()=>{
+        tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active');
+        Object.values(sections).forEach(s=> s.style.display='none');
+        const sel = t.dataset.target; sections[sel].style.display='block';
+      }));
+    }
+
+    tabify();
+
+    // -------- π por dardos --------
+    (function(){
+      const svg = d3.select('#pi-board');
+      const W=520, H=520, M=30, S=460; // inner square
+      const g = svg.append('g').attr('transform', `translate(${M},${M})`);
+      // Backdrop
+      g.append('rect').attr('width', S).attr('height', S).attr('fill', '#0b1526').attr('stroke', '#27405e');
+      // Quarter circle (centrado en 0,S para que coincida con x≥0,y≥0)
+      const arc = d3.arc().innerRadius(0).outerRadius(S).startAngle(-Math.PI/2).endAngle(0);
+      g.append('path').attr('d', arc()).attr('fill', 'rgba(124, 58, 237, .25)').attr('stroke', '#7055d6').attr('transform', `translate(0,${S})`);
+      // Axes ticks (0..1)
+      const scale = d3.scaleLinear().domain([0,1]).range([0,S]);
+      const axisB = d3.axisBottom(scale).ticks(5);
+      const axisL = d3.axisLeft(scale).ticks(5);
+      g.append('g').attr('transform',`translate(0,${S})`).attr('class','axis').call(axisB);
+      g.append('g').attr('class','axis').call(axisL);
+
+      const dotsG = g.append('g');
+
+      // convergence small chart
+      const convW=480, convH=160; const conv = d3.select('#pi-conv').append('svg').attr('viewBox',`0 0 ${convW} ${convH}`).attr('class','vis');
+      const convM = {t:10,r:10,b:24,l:34};
+      const convX = d3.scaleLinear().range([convM.l, convW-convM.r]);
+      const convY = d3.scaleLinear().range([convH-convM.b, convM.t]);
+      conv.append('g').attr('class','x axis').attr('transform',`translate(0,${convH-convM.b})`);
+      conv.append('g').attr('class','y axis').attr('transform',`translate(${convM.l},0)`);
+      const convPath = conv.append('path').attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2);
+      const ciPath = conv.append('path').attr('fill','rgba(96,165,250,.18)').attr('stroke','none');
+      const refLine = conv.append('line').attr('x1',0).attr('x2',convW).attr('y1',0).attr('y2',0).attr('stroke','#34d399');
+
+      // Controls
+      const seedEl = document.getElementById('pi-seed');
+      const rateEl = document.getElementById('pi-rate');
+      const rateVal = document.getElementById('pi-rate-val');
+      const maxDotsEl = document.getElementById('pi-maxdots');
+      const startBtn = document.getElementById('pi-start');
+      const stepBtn = document.getElementById('pi-step');
+      const resetBtn = document.getElementById('pi-reset');
+      const exportBtn = document.getElementById('pi-export');
+      rateEl.addEventListener('input', ()=> rateVal.textContent = rateEl.value);
+
+      let rng = LCG(+seedEl.value||123);
+      let inside=0, total=0; let running=false; let raf=null; const points=[]; const piSeries=[]; // series para la gráfica de convergencia
+      const MAX_STORE = 5000; // límite de puntos guardados para no degradar rendimiento
+
+      function drawPoints(){
+        const maxDots = Math.max(50, +maxDotsEl.value||1200);
+        const sel = dotsG.selectAll('circle').data(points.slice(-maxDots), d=>d.id);
+        sel.enter().append('circle')
+          .attr('r', 2.2)
+          .attr('cx', d=> scale(d.x))
+          .attr('cy', d=> scale(d.y))
+          .attr('fill', d=> d.in? '#22c55e':'#ef4444')
+          .attr('opacity', .9)
+          .append('title').text(d=> d.in? 'Dentro':'Fuera');
+        sel.exit().remove();
+      }
+
+      function updateConvergence(){
+        const n = Math.max(2, total);
+        const piHat = total? 4*inside/total : NaN;
+        const pHat = total? inside/total : NaN;
+        const se = total? 4*Math.sqrt(pHat*(1-pHat)/total) : NaN;
+        // Ejes alrededor de π (±0.25)
+        convX.domain([1, Math.max(10, n)]);
+        convY.domain([Math.PI-0.25, Math.PI+0.25]);
+        conv.select('.x.axis').call(d3.axisBottom(convX).ticks(6));
+        conv.select('.y.axis').call(d3.axisLeft(convY).ticks(5));
+        refLine.attr('x1', convX(1)).attr('x2', convX(n)).attr('y1', convY(Math.PI)).attr('y2', convY(Math.PI));
+        const area = d3.area().x(d=>convX(d.n)).y0(d=> convY(d.pi - 1.96*se)).y1(d=> convY(d.pi + 1.96*se));
+        ciPath.attr('d', area(piSeries));
+        const line = d3.line().x(d=>convX(d.n)).y(d=>convY(d.pi));
+        convPath.attr('d', line(piSeries));
+      }
+
+      function updateKPIs(){
+        const piHat = total? 4*inside/total : NaN;
+        const pHat = total? inside/total : NaN;
+        const se = total? 4*Math.sqrt(pHat*(1-pHat)/total) : NaN;
+        const err = Math.abs(piHat - Math.PI);
+        const kpis = [
+          ['🎯 Puntos dentro', inside],
+          ['➕ Total puntos', total],
+          ['π estimado', isFinite(piHat)? piHat.toFixed(6):'—'],
+          ['Error abs.', isFinite(err)? err.toExponential(2):'—'],
+          ['EE (±95%)', isFinite(se)? (1.96*se).toExponential(2):'—']
+        ];
+        const box = d3.select('#pi-kpis').selectAll('.item').data(kpis);
+        const e = box.enter().append('div').attr('class','item');
+        e.merge(box).html(d=> `<div class=\"mini\">${d[0]}</div><b>${d[1]}</b>`);
+        box.exit().remove();
+        updateConvergence();
+      }
+
+      function step(n=100){
+        for(let i=0;i<n;i++){
+          const x=rng.rand(), y=rng.rand();
+          const insideQ = (x*x + y*y) <= 1;
+          if(insideQ) inside++; total++;
+          points.push({id:total, x, y, in:insideQ});
+          if(points.length>MAX_STORE) points.splice(0, points.length-MAX_STORE);
+          if(total%50===0){ // registrar cada 50 pasos
+            piSeries.push({n: total, pi: 4*inside/total});
+            if(piSeries.length>2000) piSeries.splice(0, piSeries.length-2000);
+          }
+        }
+        drawPoints(); updateKPIs();
+      }
+
+      let lastTS=performance.now();
+      function loop(ts){
+        if(!running) return;
+        const now = (ts||performance.now());
+        const dt = Math.min(0.25, Math.max(0, (now - lastTS)/1000)); // segs desde el último frame (cap 250ms)
+        lastTS = now;
+        const ptsPerSec = Math.max(1, +rateEl.value||500);
+        const todo = Math.min(5000, Math.floor(ptsPerSec * dt));
+        if(todo>0) step(todo);
+        raf = requestAnimationFrame(loop);
+      }
+
+      function reset(){
+        rng = LCG(+seedEl.value||123);
+        inside=0; total=0; points.length=0; piSeries.length=0; dotsG.selectAll('*').remove(); updateKPIs();
+      }
+
+      startBtn.addEventListener('click', ()=>{ running=!running; startBtn.textContent = running? '⏸️ Pausar':'▶️ Iniciar'; if(running){ lastTS=performance.now(); loop(); } });
+      stepBtn.addEventListener('click', ()=> step(100));
+      resetBtn.addEventListener('click', ()=>{ running=false; startBtn.textContent='▶️ Iniciar'; reset(); });
+      exportBtn.addEventListener('click', ()=> exportSvgAsPng(svg.node(), 'pi-dardos.png'));
+
+      // init
+      reset();
+    })();
+
+
+    // -------- Convergencia 1/sqrt(n) --------
+    (function(){
+      const svg = d3.select('#conv-vis');
+      const M={t:16,r:16,b:36,l:44}; const W=780,H=420; const iw=W-M.l-M.r, ih=H-M.t-M.b;
+      const g = svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
+      const gx = g.append('g').attr('transform',`translate(0,${ih})`).attr('class','axis');
+      const gy = g.append('g').attr('class','axis');
+      const path = g.append('path').attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2);
+      const band = g.append('path').attr('fill','rgba(148,163,184,.2)').attr('stroke','none');
+      const ref = g.append('line').attr('y1',0).attr('y2',ih).attr('stroke','#22c55e');
+      const refTxt = g.append('text').attr('fill','#22c55e').attr('font-size',12).text('Media verdadera (0.5)');
+
+      function run(){
+        const seed = +document.getElementById('conv-seed').value || 777;
+        const N = Math.max(100, +document.getElementById('conv-n').value || 5000);
+        const rng = LCG(seed);
+        const means = new Float64Array(N);
+        let acc=0;
+        for(let i=0;i<N;i++){ acc += rng.rand(); means[i] = acc/(i+1); }
+
+        const x = d3.scaleLinear().domain([1,N]).range([0, iw]);
+        const y = d3.scaleLinear().domain([0.3,0.7]).range([ih,0]);
+        gx.call(d3.axisBottom(x)); gy.call(d3.axisLeft(y));
+
+        const line = d3.line().x((d,i)=>x(i+1)).y(d=>y(d));
+        path.attr('d', line(means));
+
+        // 1/sqrt(n) band (heurística): ±k/√n con k≈0.5
+        const bandUp = [], bandDn = [];
+        for(let i=1;i<=N;i++){ const eps = 0.5/Math.sqrt(i); bandUp.push([i, 0.5+eps]); bandDn.push([i, 0.5-eps]); }
+        const area = d3.area().x(d=>x(d[0])).y0(d=>y(d[1])).y1((d,i)=> y(bandUp[i][1]));
+        band.attr('d', area(bandDn));
+
+        ref.attr('x1', x(1)).attr('x2', x(N)).attr('y1', y(0.5)).attr('y2', y(0.5));
+        refTxt.attr('x', x(1)+6).attr('y', y(0.5)-6);
+      }
+
+      document.getElementById('conv-run').addEventListener('click', run);
+      document.getElementById('conv-export').addEventListener('click', ()=> exportSvgAsPng(document.getElementById('conv-vis'), 'convergencia.png'))
+      run();
+    })();
+
+  </script>
+</body>
+</html>
