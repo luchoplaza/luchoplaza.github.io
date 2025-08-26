@@ -3,7 +3,7 @@ layout: cv
 title: Portafolio Luis Plaza
 ---
 # Luis Plaza A.
-Ingeniero Civil Químico, Santiago, Chile.
+Ingeniero Civil Químico UTFSM, Santiago, Chile.
 
 <div id="webaddress">
 <a href="lplazaalvarez@gmail.com">lplazaalvarez@gmail.com</a>
@@ -38,10 +38,11 @@ Calidad físicoquimica de agua potable en Chile, [Soportado en Streamlit-Link](h
 `2025`
 Simulador Control PID de un tanque. [Link](https://luchoplaza.github.io/PIDSim/ 'Simulador PID')
 
-## Educación
+`2025`
+Testing [Extra Page](/extra.html)
 
-`2010 - 2013`
-__Humanista-Científico Plan Biólogo,Escuela Técnica Profesional, Copiapó.__
+
+## Educación
 
 `2014 - 2020`
 __Ingeniería Civil Química, Universidad Técnica Federico Santa María, Valparaíso__
