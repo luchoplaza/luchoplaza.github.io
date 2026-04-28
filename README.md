@@ -14,3 +14,9 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
+
+
+## Portafolio de mi CV.
+
+Portafolio creado con Anime.Js y publicado con Github pages.
+Encantado de contactar para proyectos.
